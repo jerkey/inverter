@@ -1,3 +1,5 @@
+// http://extremeelectronics.co.in/avr-tutorials/pwm-signal-generation-by-using-avr-timers-part-ii/
+// http://www.embedds.com/programming-16-bit-timer-on-atmega328/
 #define OUT1    3
 void setup() {
   setPwmFrequency(OUT1,1);
