@@ -13,10 +13,10 @@ void setup60hzInterrupt() {
   // Set CTC mode (Table 17-8)
   TCCR2A = (TCCR2A & ~_BV(WGM20)) | _BV(WGM21);
   TCCR2B = TCCR2B & ~_BV(WGM22);
-  // Set prescaler to 1 (No prescaler) see Table 17-9
-  TCCR2B = (TCCR2B & 0b11111000) | _BV(CS20);
+  // Set prescaler to 8 (see Table 17-9)
+  TCCR2B = (TCCR2B & 0b11111000) | _BV(CS21);
   // Set the compare register (OCR2A)
-  OCR2A = F_CPU / SAMPLE_RATE; // 16e6 / 8000 = 2000
+  OCR2A = 64; // 16e6 / 8 / 256 / 120Hz (yields 120.19Hz * 256 interrupts)
   // Enable interrupt when TCNT2 == OCR2A
   TIMSK2 |= _BV(OCIE2A);
   sei(); // enable interrupts
