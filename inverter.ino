@@ -9,29 +9,24 @@
 unsigned long lastTime = millis();
 volatile uint16_t sample;
 // This is called at SAMPLE_RATE kHz to load the next sample.
-ISR(TIMER1_COMPA_vect) {
+ISR(TIMER2_COMPA_vect) {
   sample+=1;
 }
 
 void setup60hzInterrupt() {
-  // Set up Timer 1 to send a sample every interrupt.
+  // Set up Timer 2 to send a sample every interrupt.
   cli(); // disable interrupts
-  // Set CTC mode (Section 15.9.2 Clear Timer on Compare Match)
-  // WGM = 0b0100, TOP = OCR1A, Update 0CR1A Immediate (Table 15-4)
-  // Have to set OCR1A *after*, otherwise it gets reset to 0!
-  TCCR1B = (TCCR1B & ~_BV(WGM13)) | _BV(WGM12);
-  TCCR1A = TCCR1A & ~(_BV(WGM11) | _BV(WGM10));
-  // No prescaler, CS = 0b001 (Table 15-5)
-  TCCR1B = (TCCR1B & ~(_BV(CS12) | _BV(CS11))) | _BV(CS10);
-  // Set the compare register (OCR1A).
-  // OCR1A is a 16-bit register, so we have to do this with
-  // interrupts disabled to be safe.
-  OCR1A = F_CPU / SAMPLE_RATE; // 16e6 / 8000 = 2000
-  // Enable interrupt when TCNT1 == OCR1A (p.136)
-  TIMSK1 |= _BV(OCIE1A);
+  // Set CTC mode (Table 17-8)
+  TCCR2A = (TCCR2A & ~_BV(WGM20)) | _BV(WGM21);
+  TCCR2B = TCCR2B & ~_BV(WGM22);
+  // Set prescaler to 1 (No prescaler) see Table 17-9
+  TCCR2B = (TCCR2B & 0b11111000) | _BV(CS20);
+  // Set the compare register (OCR2A)
+  OCR2A = F_CPU / SAMPLE_RATE; // 16e6 / 8000 = 2000
+  // Enable interrupt when TCNT2 == OCR2A
+  TIMSK2 |= _BV(OCIE2A);
   sei(); // enable interrupts
 }
-
 
 void setup() {
   Serial.begin(57600);
@@ -40,6 +35,7 @@ void setup() {
   setPwmFrequency(OUT1,1);
   pinMode(OUT1,OUTPUT);
   sample = 0;
+  delay(1000);
   setup60hzInterrupt();
 }
 
