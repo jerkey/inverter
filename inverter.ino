@@ -1,3 +1,4 @@
+#include "sinewave.h"
 #define SAMPLE_RATE 15360// 256*60
 #define OUT1    13
 unsigned long lastTime = millis();
@@ -7,7 +8,7 @@ ISR(TIMER2_COMPA_vect) {
   sample+=1;
 }
 
-void setup60hzInterrupt() {
+void setup30720hzInterrupt() {
   // Set up Timer 2 to send a sample every interrupt.
   cli(); // disable interrupts
   // Set CTC mode (Table 17-8)
@@ -27,7 +28,7 @@ void setup() {
   Serial.println("inverter.ino");
   Serial.println(F_CPU);
   pinMode(OUT1,OUTPUT);
-  setup60hzInterrupt();
+  setup30720hzInterrupt();
 }
 
 void loop() {
